@@ -195,7 +195,7 @@
 
 ;;;; Swank functions
 
-(defimplementation arglist (fname)
+(defimplementation %arglist (fname)
   (block nil
     (or (ignore-errors
           (let ((exp (function-lambda-expression fname)))

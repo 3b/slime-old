@@ -31,6 +31,7 @@
            #:quit-lisp
            #:references
            #:unbound-slot-filler
+           #:arglist
            #:declaration-arglist
            #:type-specifier-arglist
            #:with-struct
@@ -542,7 +543,7 @@ The stream calls READ-STRING when input is needed.")
 
 ;;;; Documentation
 
-(definterface arglist (name)
+(definterface %arglist (name)
    "Return the lambda list for the symbol NAME. NAME can also be
 a lisp function object, on lisps which support this.
 
@@ -550,6 +551,14 @@ The result can be a list or the :not-available keyword if the
 arglist cannot be determined."
    (declare (ignore name))
    :not-available)
+
+(defparameter *arglist-hooks* '(%arglist))
+
+(defun arglist (name)
+  (loop for f in *arglist-hooks*
+     do (multiple-value-bind (args found) (funcall f name)
+          (when (or args found)
+            (return args)))))
 
 (defgeneric declaration-arglist (decl-identifier)
   (:documentation

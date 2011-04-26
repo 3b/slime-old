@@ -44,12 +44,13 @@ Otherwise NIL is returned."
                   (setq found v))))
     found))
 
+(defparameter *valid-operator-symbol-p-hooks*
+  (list 'fboundp 'macro-function 'special-operator-p
+        (lambda (symbol) (member symbol '(declare declaim)))))
+
 (defun valid-operator-symbol-p (symbol)
   "Is SYMBOL the name of a function, a macro, or a special-operator?"
-  (or (fboundp symbol)
-      (macro-function symbol)
-      (special-operator-p symbol)
-      (member symbol '(declare declaim))))
+  (some (lambda (a) (funcall a symbol)) *valid-operator-symbol-p-hooks*))
 
 (defun function-exists-p (form)
   (and (valid-function-name-p form)
@@ -696,7 +697,7 @@ forward keywords to OPERATOR."
 (defmethod extra-keywords (operator &rest args)
   ;; default method
   (declare (ignore args))
-  (let ((symbol-function (symbol-function operator)))
+  (let ((symbol-function (and (fboundp operator) (symbol-function operator))))
     (if (typep symbol-function 'generic-function)
         (generic-function-keywords symbol-function)
         nil)))

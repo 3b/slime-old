@@ -1238,7 +1238,7 @@ Signal an error if no constructor can be found."
 
 ;;;;; Argument lists
 
-(defimplementation arglist (fun)
+(defimplementation %arglist (fun)
   (multiple-value-bind (args winp)
       (ext:function-arglist fun)
     (if winp args :not-available)))
