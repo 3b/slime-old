@@ -1,3 +1,83 @@
+2011-05-24  Helmut Eller  <heller@common-lisp.net>
+
+	* slime.el (destructure-case): Fix "`_' not left unused" warnings.
+	Insert an (ignore) form for empty bodies; this inhibts the
+	compiler transformation that leads to the spurios warning.  This
+	has no runtime cost in compiled code, since the compiler
+	recognizes (ignore) and emits no code for it.
+	(slime-flatten-tree): Deleted. No longer used.
+
+2011-05-23  Stas Boukarev  <stassats@gmail.com>
+
+	* swank.lisp (sdlb-print-condition): New (or old new)
+	function. It was bound by P in sldb-mode, but for some reason it
+	was lost.
+
+2011-05-23  Helmut Eller  <heller@common-lisp.net>
+
+	* slime.el (slime-apropos-label-properties): Deleted.  Just
+	auto-load apropos-mode.
+	(slime-print-apropos): Use the variable apropos-label-face
+	which seems to exist in all relevant Emacsen.
+
+2011-05-22  Helmut Eller  <heller@common-lisp.net>
+
+	Turn on lexical-binding for slime.el.
+	This mostly involves prefixing unused variables
+	with underscores to shut up the compiler, but
+	also some less harmless changes.
+
+	* slime.el (slime-dispatching-connection, slime-current-thread):
+	Add defvars.
+	(slime-connect): called-interactively-p wants 1 arg in Emacs 24
+	but none in Emacs 22.  So we can't use it; instead add an extra
+	optional arg and set that to non-nil in the interactive spec.
+	(slime-read-from-minibuffer): Actually use the history arg.
+	(slime-inspector-quit): Drop the unused kill-buffer arg from the
+	lambda-list.
+	(slime-run-tests): Can't specbind slime-repl-history-file without
+	variable declation.  I don't want to declare it here so I just
+	eliminated it and let somebody else fix slime-repl.el.
+
+2011-05-21  Helmut Eller  <heller@common-lisp.net>
+
+	Minor tweaks to avoid some compiler warnings.
+
+	* slime.el (slime-modeline-string, slime-buffer-connection):
+	Declare variables.
+	(slime-flatten-tree): Helper function.
+	(destructure-case): Use it, and make '_ ignorable if
+	it occurs in some pattern.
+	(slime-connect): Avoid obsolete functions:
+	string-to-int -> string-to-number
+	interactive-p -> called-interactively-p
+	(slime-complete-maybe-restore-window-configuration)
+	last-command-char -> last-command-event
+	completion-base-size ->  completion-base-position
+	(slime-xref-mode-map): Use call-interactively
+	when calling the remapped next-line/previous-line commands.
+
+2011-05-09  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* swank-sbcl.lisp (swank-compile-string): Use :SOURCE-NAMESTRING
+	to provide the name of the actual source file, and
+	:ALLOW-OTHER-KEYS for compatibility with pre-1.0.48.1 versions.
+	This allows SBCL to get uninteresting redefinition muffling right.
+	(*trap-load-time-warnings*): Default to T to make the redefinition
+	notes more visible, especially now that redefinition muffling hides
+	the boring ones.
+
+2011-05-08  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* slime.el (slime-intern-indentation-spec): New function. Converts
+	strings in an indentation spec to symbols.
+	(slime-handle-indentation-update): Intern the indentation spec using
+	slime-intern-indentation-spec, so that lisp side can pass complex indentation
+	specs.
+	* contrib/swank-indentation.lisp (application-indentation-hint): Downcase
+	symbol names -- any symbol in an indentation spec is pretty much guaranteed
+	to have a lowecase name on the Emacs side.
+
 2011-04-16  Stas Boukarev  <stassats@gmail.com>
 
 	* slime.el (slime-load-failed-fasl): New variable. Accepts `ask',
