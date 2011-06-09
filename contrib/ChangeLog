@@ -1,5 +1,38 @@
 2011-06-09  Nikodemus Siivola  <nikodemus@random-state.net>
 
+	* slime-cl-indent.el (lisp-lambda-list-keyword-parameter-alignment):
+	fix docstring: key1 and key3 were aligned in source, but not in *Help*.
+	(common-lisp-delete-style): Missing function, needed by tests.
+	(common-lisp-indent-function-1, run-lisp-indent-tests): Fix fallback
+	to handle case of first function argument on its own line.
+
+	Support for per-package derived indentation.
+
+	* slime-cl-indent.el (common-lisp-system-indentation)
+	(common-lisp-guess-current-package)
+	(common-lisp-current-package-function)
+	(common-lisp-symbol-package): New variables and functions.
+	(common-lisp-get-indentation): Adjust to use system derived
+	information when available.
+	(common-lisp-indent-function-1): Adust to provide
+	`common-lisp-get-indentation' with the full symbol incl.
+	package prefix.
+
+	* slime-indentation.el (common-lisp-current-package-function): set
+	to `slime-current-package'.
+
+	Support for named styles.
+
+	* slime-cl-indent.el (common-lisp-style)
+	(common-lisp-style-default, common-lisp-active-style)
+	(common-lisp-lisp-mode-hook, common-lisp-styles)
+	(common-lisp-add-style, define-common-lisp-style)
+	(common-lisp-set-style, common-lisp-set-style-history)
+	(common-lisp-activate-style, common-lisp-get-indentation): New
+	functions and variables. Setting `common-lisp-style' buffer local
+	variable in a file picks a style -- or use `common-lisp-set-style"
+	to do it. Indentation from style takes precedence.
+
 	Indirect indentation specs.
 
 	* slime-cl-indent.el (common-lisp-indent-function)
