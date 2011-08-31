@@ -1,3 +1,153 @@
+2011-08-30  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* slime-repl.el	(slime-repl-suppress-prompt): New variable. Bind to T to
+	temporarily suppress the prompt.
+	(slime-eval-last-expression-in-repl): New command. Sends form from
+	another buffer to REPL for evaluation.
+	(slime-mode-map): Bind slime-eval-last-expression-in-repl to C-c C-j.
+
+2011-08-05  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* swank-indentation.lisp (macro-indentation): Tweak so that
+	things that could be bindings are indented by 1, not 4.
+
+2011-07-27  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* slime-cl-indent.el: Tweak COND indentation.
+	* slime-cl-indent-test.txt: Tests 48 and 49.
+
+2011-06-21  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* slime-cl-indent.el (lisp-loop-indent-forms-like-keywords): Fix type error.
+	(common-lisp-style-default): Fix type error, move to after styles have been
+	defined so as to be able to offer a menu for picking the predefined styles.
+	("sbcl"): Oops! It's (as ...) not (:as ...). Also add couple of missing defining
+	forms.
+
+2011-06-16  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* swank-indentation.lisp (macro-indentation): More complex
+	version than the default. Fixes some of the misbehaviour of
+	the previous complex version.
+
+2011-06-15  Stas Boukarev  <stassats@gmail.com>
+
+	* slime-scheme.el (slime-scheme-indentation-update):
+	`slime-indentation-update-hooks' now requires functions to accept
+	three arguments. Add `packages' parameter.
+
+2011-06-14  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	WITH-COMPILATION-UNIT indentation.
+
+	* slime-cl-indent.el: Add indentation method.
+
+	* slime-cl-indent-test.txt: Test 47.
+
+	Fix indentation of incomplete destructring.
+
+	* slime-cl-indent.el (lisp-indent-259): If there's a level of
+	destructuring specified in a tail, but we're looking at a word,
+	indent to sexp instead.
+
+	* slime-cl-indent-test.txt: Test 46.
+
+	Don't consider DEFINER and DEFINITION as tentative defuns.
+
+	* slime-cl-indent.el (common-lisp-indent-function-1): Don't consider
+	"definition" or "definer" to be tentative defuns.
+
+	* slime-cl-indent-test.txt: Tests 44-45.
+
+	Better DEFMETHOD and :METHOD indentation.
+
+	* slime-cl-indent.el (lisp-beginning-of-defmethod): New function.
+	(lisp-indent-defmethod): Extend to work with non-toplevel defmethods,
+	and method definitions inside defgenerics.
+
+	* slime-cl-indent-test.txt: Tests 40-43.
+
+2011-06-11  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	* slime-cl-indent.el (common-lisp-style-names): XEmacs doesn't
+	like lists either in completing-read -- need an alist.
+
+	XEmacs compatibility.
+
+	* slime-cl-indent.el (common-lisp-style-names): New function.
+	(common-lisp-set-style): Call common-lisp-style-names instead of
+	using the hashtable directly: XEmacs doesn't like hash-tables in
+	completing-read.
+	(common-lisp-looking-back): New function.
+	(common-lisp-indent-function-1): Use common-lisp-looking-back instead
+	of looking-back: XEmacs doesn't have looking-back.
+
+	Refactoring named styles.
+
+	* slime-cl-indent.el (define-common-lisp-style): Not a list of hooks anymore,
+	but just a single hook. Document the fact that code in :eval option may get
+	called multiple times over the lifetime of a buffer.
+	(common-lisp-style-name, common-lisp-style-inherits)
+	(common-lisp-style-variables, common-lisp-style-indentation)
+	(common-lisp-style-hook, common-lisp-style-docstring)
+	(common-lisp-make-style, common-lisp-find-style): New functions.
+	Convenience accessors, locator, and constructor.
+	(common-lisp-add-style): Don't precompute inheritance.
+	(common-lisp-safe-style-p): For use with safe-local-variable.
+	(common-lisp-activate-style): Now handles inheritance.
+	(common-lisp-active-style-methods): New function, computes and caches
+	inheritance.
+	(common-lisp-set-style): Changes to match others.
+	(common-lisp-get-indentation): Use common-lisp-active-style-methods.
+
+2011-06-10  Nikodemus Siivola  <nikodemus@random-state.net>
+
+	Boa-constructor indentation.
+
+	* slime-cl-indent.el: Give :constructor the appropriate
+	indentation method.
+
+	* slime-cl-indent-test.txt: Test-case 39.
+
+	* slime-cl-indent.el (common-lisp-indent-function-1): Missing
+	paren. Teaches me to to paredit.
+
+	Take , and ,@ into account properly.
+
+	* slime-cl-indent.el (common-lisp-indent-function-1): Adjust
+	normal-indent to take , and ,@ into account
+
+	* slime-cl-indent-test.txt: Test case 36-38.
+
+	Better handling of complex indentation specs.
+
+	* slime-cl-indent.el (common-lisp-run-indentation-tests): Add
+	a style with complex specs for testing.
+	(lisp-indent-259): fix handling of nested &whole. Hopefully.
+
+	slime-indentation: Comment indentation in styles.
+
+	* slime-cl-indent.el ("basic"): Hack comment indentation
+	to avoid inserting spaces where they don't belong.
+
+	slime-indentation: More adjustment to the fallback method.
+
+	* slime-cl-indent.el (common-lisp-indent-function-1): handle
+	case of empty or comment line following the opening paren
+	of the containing expression.
+
+	* slime-cl-indent-test.txt: new test case.
+
+	slime-indentation: Test refactoring.
+
+	* slime-cl-indent.el (common-lisp-indent-test): replaces
+	test-lisp-indent.
+	(common-lisp-run-indentation-tests): replaces
+	run-lisp-indent-tests.
+
+	* slime-cl-indent-test.txt: new file, contains all the indentation
+	tests.
+
 2011-06-09  Nikodemus Siivola  <nikodemus@random-state.net>
 
 	* slime-cl-indent.el (lisp-lambda-list-keyword-parameter-alignment):
