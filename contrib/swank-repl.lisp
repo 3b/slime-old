@@ -22,9 +22,12 @@ DEDICATED-OUTPUT INPUT OUTPUT IO REPL-RESULTS"
   (let* ((input-fn
           (lambda ()
             (with-connection (connection)
-              (with-simple-restart (abort-read
-                                    "Abort reading input from Emacs.")
-                (read-user-input-from-emacs)))))
+              (unless (member connection *connections*)
+                (setf connection (default-connection)))
+              (when connection
+                (with-simple-restart (abort-read
+                                      "Abort reading input from Emacs.")
+                  (read-user-input-from-emacs))))))
          (dedicated-output (if *use-dedicated-output-stream*
                                (open-dedicated-output-stream
                                 connection
@@ -45,16 +48,22 @@ DEDICATED-OUTPUT INPUT OUTPUT IO REPL-RESULTS"
 (defun make-output-function (connection)
   "Create function to send user output to Emacs."
   (lambda (string)
-    (with-connection (connection)
-      (send-to-emacs `(:write-string ,string)))))
+    (unless (member connection *connections*)
+      (setf connection (default-connection)))
+    (when connection
+      (with-connection (connection)
+        (send-to-emacs `(:write-string ,string))))))
 
 (defun make-output-function-for-target (connection target)
   "Create a function to send user output to a specific TARGET in Emacs."
   (lambda (string)
-    (with-connection (connection)
-      (with-simple-restart
-          (abort "Abort sending output to Emacs.")
-        (send-to-emacs `(:write-string ,string ,target))))))
+    (unless (member connection *connections*)
+      (setf connection (default-connection)))
+    (when connection
+      (with-connection (connection)
+        (with-simple-restart
+            (abort "Abort sending output to Emacs.")
+          (send-to-emacs `(:write-string ,string ,target)))))))
 
 (defun make-output-stream-for-target (connection target)
   "Create a stream that sends output to a specific TARGET in Emacs."
